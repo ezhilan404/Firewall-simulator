@@ -1,2 +1,2 @@
 # Firewall-simulator
-A simple program to simulate firewall without needing admin access
+A simple program to simulate firewall  and a visualizer without needing admin access
