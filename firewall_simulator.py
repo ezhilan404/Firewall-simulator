@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import json
 import sys
+import matplotlib.pyplot as plt
 
 # Ensure UTF-8 output
 try:
@@ -8,16 +9,11 @@ try:
 except Exception:
     pass
 
-# -------------------------------
-# Firewall Rule Simulator (Plain Version)
-# -------------------------------
-
 RULES_FILE = "rules.json"
 PACKETS_FILE = "packets.json"
 LOG_FILE = "firewall_log.json"
 
 
-# --- Helper: Load JSON File ---
 def load_json(file_path):
     try:
         with open(file_path, "r", encoding="utf-8") as f:
@@ -30,7 +26,6 @@ def load_json(file_path):
         sys.exit(1)
 
 
-# --- Match Logic ---
 def match_field(value, pattern):
     if pattern == "*":
         return True
@@ -46,7 +41,6 @@ def match_rule(packet, rule):
             match_field(packet["protocol"], rule["protocol"]))
 
 
-# --- Apply Rules ---
 def apply_firewall_rules(packets, rules):
     results = []
     for pkt in packets:
@@ -61,7 +55,57 @@ def apply_firewall_rules(packets, rules):
     return results
 
 
-# --- Main Program ---
+# -------------------------------
+# Visualization
+# -------------------------------
+def visualize(results):
+    sources = list({res["packet"]["src"] for res in results})
+    destinations = list({res["packet"]["dst"] for res in results})
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+    ax.set_xlim(0, 10)
+    ax.set_ylim(0, max(len(sources), len(destinations)) + 1)
+    ax.axis('off')
+
+    # Position sources and destinations
+    src_positions = {ip: (1, i+1) for i, ip in enumerate(sources)}
+    dst_positions = {ip: (9, i+1) for i, ip in enumerate(destinations)}
+
+    # Draw nodes
+    for ip, (x, y) in src_positions.items():
+        ax.text(x, y, ip, ha='center', va='center', bbox=dict(facecolor='lightblue', boxstyle="round,pad=0.3"))
+
+    for ip, (x, y) in dst_positions.items():
+        ax.text(x, y, ip, ha='center', va='center', bbox=dict(facecolor='lightgreen', boxstyle="round,pad=0.3"))
+
+    # Draw arrows for each packet
+    for res in results:
+        pkt = res["packet"]
+        action = res["action"]
+        src = pkt["src"]
+        dst = pkt["dst"]
+
+        start = src_positions[src]
+        end = dst_positions[dst]
+
+        color = 'green' if action.upper() == 'ALLOW' else 'red'
+        ax.annotate("",
+                    xy=end, xycoords='data',
+                    xytext=start, textcoords='data',
+                    arrowprops=dict(arrowstyle="->", color=color, lw=2))
+
+        # Optional: write port/protocol along the arrow
+        mid_x = (start[0] + end[0]) / 2
+        mid_y = (start[1] + end[1]) / 2
+        ax.text(mid_x, mid_y, f"{pkt['port']}/{pkt['protocol']}", ha='center', va='bottom', fontsize=8)
+
+    plt.title("Firewall Packet Flow Simulation")
+    plt.show()
+
+
+# -------------------------------
+# Main Program
+# -------------------------------
 def main():
     rules = load_json(RULES_FILE)
     packets = load_json(PACKETS_FILE)
@@ -84,7 +128,9 @@ def main():
 
     print(f"Simulation results saved to {LOG_FILE}")
 
+    # Visualize packet flow
+    visualize(results)
+
 
 if __name__ == "__main__":
     main()
-
