@@ -1,0 +1,66 @@
+[
+    {
+        "packet": {
+            "src": "192.168.1.10",
+            "dst": "10.0.0.5",
+            "port": "22",
+            "protocol": "TCP"
+        },
+        "action": "ALLOW",
+        "matched_rule": {
+            "src": "192.168.1.10",
+            "dst": "10.0.0.5",
+            "port": "22",
+            "protocol": "TCP",
+            "action": "ALLOW"
+        }
+    },
+    {
+        "packet": {
+            "src": "192.168.1.11",
+            "dst": "10.0.0.5",
+            "port": "80",
+            "protocol": "TCP"
+        },
+        "action": "DENY",
+        "matched_rule": {
+            "src": "192.168.1.*",
+            "dst": "10.0.0.5",
+            "port": "80",
+            "protocol": "TCP",
+            "action": "DENY"
+        }
+    },
+    {
+        "packet": {
+            "src": "8.8.8.8",
+            "dst": "10.0.0.5",
+            "port": "443",
+            "protocol": "TCP"
+        },
+        "action": "ALLOW",
+        "matched_rule": {
+            "src": "*",
+            "dst": "*",
+            "port": "*",
+            "protocol": "*",
+            "action": "ALLOW"
+        }
+    },
+    {
+        "packet": {
+            "src": "192.168.1.5",
+            "dst": "10.0.0.5",
+            "port": "8080",
+            "protocol": "UDP"
+        },
+        "action": "ALLOW",
+        "matched_rule": {
+            "src": "*",
+            "dst": "*",
+            "port": "*",
+            "protocol": "*",
+            "action": "ALLOW"
+        }
+    }
+]

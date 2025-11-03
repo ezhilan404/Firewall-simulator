@@ -1,0 +1,23 @@
+[
+    {
+        "src": "192.168.1.10",
+        "dst": "10.0.0.5",
+        "port": "22",
+        "protocol": "TCP",
+        "action": "ALLOW"
+    },
+    {
+        "src": "192.168.1.*",
+        "dst": "10.0.0.5",
+        "port": "80",
+        "protocol": "TCP",
+        "action": "DENY"
+    },
+    {
+        "src": "*",
+        "dst": "*",
+        "port": "*",
+        "protocol": "*",
+        "action": "ALLOW"
+    }
+]
